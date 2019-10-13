@@ -13,12 +13,14 @@ import java.net.Socket;
 public class Main {
     public static void main(String[] args) {
         try {
+            System.out.println("Server is running...");
             Socket client = connectSocket();
             DataOutputStream dos = new DataOutputStream(client.getOutputStream());
             DataInputStream dis = new DataInputStream(client.getInputStream());
+            System.out.println("Client Connected...");
             runGame(dos, dis);
         } catch (IOException e) {
-            System.out.println("User Disconnected!");
+            System.out.println("Client Disconnected!");
         }
     }
 
