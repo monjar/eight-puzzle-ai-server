@@ -84,15 +84,24 @@ public class Board {
     }
 
     public void printBoard() {
+        System.out.println(this.toString());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder printString = new StringBuilder();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (grid[i][j].equals("0"))
-                    System.out.print(" " + "\t");
+                    printString.append(" ").append("\t");
+
                 else
-                    System.out.print(grid[i][j] + "\t");
+                    printString.append(grid[i][j]).append("\t");
+
             }
-            System.out.println();
+            printString.append("\n");
         }
+        return printString.toString();
     }
 
     public boolean isFinished(){
