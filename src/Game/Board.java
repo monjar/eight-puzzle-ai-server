@@ -8,10 +8,32 @@ public class Board {
 
     private int emptyX, emptyY;
 
-    public Board(int size) {
+    public Board(int size, String ...options) {
         this.size = size;
         this.grid = new String[size][size];
-        randomFillBoard();
+        if (options[0].equals("input"))
+            fillWithInput();
+        if (options[0].equals("rand"))
+            randomFillBoard(Integer.valueOf(options[1]));
+    }
+
+    private void fillWithInput() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("enter board initial state: ");
+        for (int i = 0; i < size; i++) {
+            grid[i] = in.nextLine().split("\t");
+        }
+        findEmpty();
+        System.out.println("board initialized.");
+    }
+
+    private void findEmpty() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (grid[i][j].equals("0"))
+                    updateEmptyCell(i, j);
+            }
+        }
     }
 
 
@@ -43,18 +65,33 @@ public class Board {
         String temp = this.grid[y][x];
         this.grid[y][x] = this.grid[this.emptyY][this.emptyX];
         this.grid[this.emptyY][this.emptyX] = temp;
-        this.updateEmptyCell(y,x);
+        this.updateEmptyCell(y, x);
     }
 
     private boolean isCellOutOfBounds(int y, int x) {
         return y >= this.size || x >= this.size || y < 0 || x < 0;
     }
 
-    private void randomFillBoard() {
-        List<String> numSet = makeRandomOrderNumbers();
+    private void randomFillBoard(int movesNum) {
+        System.out.println("Initializing random board ");
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
-                putNumberInCell(numSet, i, j);
+                grid[i][j] = String.valueOf(i * this.size + j + 1);
+
+        grid[size - 1][size - 1] = "0";
+        updateEmptyCell(size - 1, size - 1);
+        makeRandomMoves(movesNum);
+        System.out.println("board initialized.");
+    }
+
+    private void makeRandomMoves(int movesNum) {
+        Directions[] directions = {Directions.UP, Directions.DOWN, Directions.LEFT, Directions.RIGHT};
+        for (int i = 0; i < movesNum; i++) {
+            try {
+                makeMove(directions[(int) (Math.random() * 4)]);
+            } catch (WrongMoveException e) {
+            }
+        }
     }
 
     private void putNumberInCell(List<String> numSet, int i, int j) {
@@ -76,18 +113,6 @@ public class Board {
 
         Collections.shuffle(numSet);
         return numSet;
-    }
-
-    private void fillToWin() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                this.grid[i][j] = String.valueOf(i * this.size + j + 1);
-            }
-        }
-        this.grid[size - 1][size - 1] = this.grid[size - 1][size - 2];
-        this.grid[size - 1][size - 2] = "0";
-        this.emptyY = size - 1;
-        this.emptyX = size - 2;
     }
 
     public void printBoard() {
